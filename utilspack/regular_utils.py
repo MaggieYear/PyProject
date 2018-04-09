@@ -43,7 +43,7 @@ def group_def():
     print obj.group(4)    #cdfg
 
 def phone_regex():
-    str1 = '这个18682268349是一个手机号，18672883726也是手机号'
+    str1 = '这个18685244349是一个手机号，18672883726也是手机号'
     #  ?:  不分组
     regex_phone = re.compile('((?:(?:13[0-9])|(?:15[^4,\D])|(?:18[0,2,5-9]))\d{8})')
     print regex_phone.findall(str1)

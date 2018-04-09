@@ -6,7 +6,6 @@ import os
 
 #1、访问url，获取网页源代码
 def spider_qiushi(url):
-
     user_agent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36'
     headers = {'User-Agent': user_agent}
     try:
@@ -20,6 +19,7 @@ def spider_qiushi(url):
         print e
         exit()
     return content
+
 
 #2、解析源代码，获取目标数据
 def resolve_html(html_content,index):
@@ -35,6 +35,8 @@ def resolve_html(html_content,index):
        #把多余的换行符去掉'\n'
        #把<br/>换成换行符'\n'
         item_new = item.replace('\n','').replace("<br/>",'\n')
+
+       # 3、保存数据
         path = 'qiushibaike_'+str(index)
         if not os.path.exists(path):
             os.makedirs(path)
@@ -43,14 +45,15 @@ def resolve_html(html_content,index):
         f.write(item_new)
         f.close()
         count += 1
-#3、保存数据
 
 
 if __name__ == '__main__':
     print '开始抓取'
     for i in range(1,5):
         url = "http://www.qiushibaike.com/textnew/page/" + str(i) + "?s=4832451"
+        #获取网页源代码
         content = spider_qiushi(url)
         #print(content)
+        #解析源代码获取数据
         resolve_html(content,i)
     print '抓取结束'
