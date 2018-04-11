@@ -65,43 +65,49 @@ class BlueBall:
         self.range = [1, 16]
         self.flag = '+'
 
-def getLocalTime():
-    # localtime = time.localtime(time.time())
-    localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    print("current time:", localtime)
-    return localtime
+class GameRunner:
 
-#写到文件里
-def save( path, filename, content):
-    if not os.path.exists(path):
-        os.makedirs(path)
+    def __init__(self,path,filename):
+        self.path = path
+        self.filename = filename
 
-    file_path = path + '/' + filename
-    f = open(file_path, 'a+')
-    f.write(content)
-    f.close()
+    def getLocalTime(self):
+        # localtime = time.localtime(time.time())
+        localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print("current time:", localtime)
+        return localtime
 
-def run():
-    # 一个存放双色球的列表
-    list = []
-    # 生成六个红色球，放到列表里
-    red_list = CreateBall(RedBall()).create_simple_ball()
+    #写到文件里
+    def save( self,path, filename, content):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        file_path = path + '/' + filename
+        f = open(file_path, 'a+')
+        f.write(content)
+        f.close()
 
-    #生成一个蓝色球，放到列表里
-    blue_list = CreateBall(BlueBall()).create_simple_ball()
-    #标记蓝色球
-    blue_list[0] = BlueBall().flag + str(blue_list[0])
+    def run(self):
+        # 一个存放双色球的列表
+        list = []
+        # 生成六个红色球，放到列表里
+        red_list = CreateBall(RedBall()).create_simple_ball()
 
-    list = red_list + blue_list
-    print list
-    #获得当前时间
-    current_time = getLocalTime()
-    content = "[" + current_time + "]\n" + str(list) +"\n"
+        #生成一个蓝色球，放到列表里
+        blue_list = CreateBall(BlueBall()).create_simple_ball()
+        #标记蓝色球
+        blue_list[0] = BlueBall().flag + str(blue_list[0])
 
-    path = 'ball'
-    filename = 'colorball.txt'
-    #写出到文件
-    save( path, filename,content)
+        list = red_list + blue_list
+        print list
+        #获得当前时间
+        current_time = self.getLocalTime()
+        content = "[" + current_time + "]\n" + str(list) +"\n"
+
+        #写出到文件
+        self.save( self.path, self.filename,content)
 
 if __name__ == '__main__':
-    run()
+    path = 'ball'
+    filename = 'colorball.txt'
+    gameRunner = GameRunner(path, filename)
+    gameRunner.run()
