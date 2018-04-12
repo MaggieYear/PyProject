@@ -27,46 +27,43 @@ class GameExecute:
     def createKeyWord(self,user_list):
         self.undercover_word = "狗子"
         self.civilian_word = "柴狗"
-        for user in user_list:
 
-            if user.role_id == 1:
+        for _user in user_list:
+
+            if _user.role_id == 1:
                 # 卧底
-                user.key_word = self.undercover_word
+                _user.key_word = self.undercover_word
             else:
                 # 平民
-                user.key_word = self.civilian_word
-            user_list[user.id] = user
+                _user.key_word = self.civilian_word
+            user_list[_user.id] = _user
+
+        self.user_list = user_list
         return user_list
 
     #分配带角色的玩家
     def createUser(self,user_count):
-        undercover_count = 0
-        civilian_count = 0
-        if user_count % 2 == 0:
-            # 玩家数为偶数
-            #  角色用户对半分
-            undercover_count = (user_count / 2)
-            civilian_count = (user_count / 2)
-        else:
-            undercover_count = (user_count / 2)
-            civilian_count =  undercover_count + 1
+        undercover_count = 1
+        civilian_count = user_count - 1
+        #当前id (0, user_count-1)
+        cur_id = 0
 
-        cur_id = user_count
-        for  undercover_count in range(0, undercover_count):
-            user = User(cur_id,1)
-            self.user_list.append(user)
-            cur_id -= 1
-        print str(cur_id) + '卧底数'+str(len(self.user_list))
+        #分配卧底
+        user = User(cur_id,1)
+        self.user_list.append(user)
+        cur_id += 1
 
+        #分配平民角色
         for civilian_count in range(0, civilian_count):
             user = User(cur_id, 0)
             self.user_list.append(user)
-            cur_id -= 1
+            cur_id += 1
+            civilian_count -= 1
         print str(cur_id) + '总用户数' + str(len(self.user_list))
 
         return self.user_list
 
-    #其他玩家发言
+    #模拟玩家发言
     def userTalk(self,user_list,cur_user_id):
 
         for user in user_list:
