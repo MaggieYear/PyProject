@@ -6,15 +6,16 @@ import operator
 import random
 
 """
-投票的引擎
-1、模拟玩家投票
-2、汇总票数
-3、淘汰票数最多的玩家，出局玩家是卧底，则平民胜利。
-4、判断剩余角色人数，游戏定局
-    当剩两个玩家且有卧底时，卧底胜利
+（1）分配平民词语和卧底词语
+（2）玩家依次发言
+（3）投票认为谁是卧底
+（4）得到票数最多的玩家出局，如果最高票数有两个，则进行下一轮。
+（5）出局玩家刚好是卧底则平民胜利，如果出局玩家是平民则被冤死继续下一轮。
+（6）当剩下的玩家只有两个并且有卧底时，卧底胜利。
 """
 
 class VoteExecute:
+    """投票和输赢机制模块"""
 
     def __init__(self):
         self.user_id = 0
@@ -52,54 +53,20 @@ class VoteExecute:
             self.castVote(user_id, tmp_vote)
 
     #分析投票结果
-    def analysisVote(self,cur_id):
+    def analysisVote(self):
         #对投票结果进行排序,字典转成list
         vote_list = sorted(self.vote_dict.items(),key=lambda item:item[1])
+
         #取出最后一个元素（票数最多的）
         max_index = len(vote_list)-1
         max_vote = vote_list[max_index]
-        print max_vote
 
-        # 判断是否是当前玩家
-        if max_vote[0] == cur_id:
-            print "当前玩家被淘汰"
+        #取出倒数第二个元素，判断是否平票
+        max_index2 = len(vote_list) - 2
+        max_vote2 = vote_list[max_index2]
+
+        if max_vote2[1] == max_vote[1]:#判断是否平票
             return None
         else:
-            print "其他玩家被淘汰"
+            print max_vote
             return max_vote #（3,2）user_id为3的用户获得2票
-
-if __name__ == '__main__':
-
-    voteExecute = VoteExecute()
-
-    user = User(1,0)
-    vote_num = 4
-    result = voteExecute.castVote(user.id,vote_num)
-    print result
-
-    user = User(2, 0)
-    vote_num = 5
-    result = voteExecute.castVote(user.id,vote_num)
-    print result
-
-    user = User(3, 1)
-    vote_num = 4
-    result = voteExecute.castVote(user.id,vote_num)
-    print result
-
-    #分析投票结果
-    cur_id = 3  #当前用户ID
-    user_list = voteExecute.analysisVote(cur_id)
-    if user_list is None:
-        print "游戏结束"
-        #判断当前用户角色
-        if user.role_id == 1:
-            #卧底
-            print "卧底已被找出，平民胜利！"
-    else:
-        #判断剩下多少玩家
-        if len(user_list) == 2:
-            print "只剩下两个人啦，卧底胜利！"
-        else:
-            #接着下一轮
-            pass

@@ -2,14 +2,18 @@
 # -*- coding: utf-8 -*-
 from user_role import User
 from user_role import Role
+from key_word import KeyWords
 import time
+import random
 
 """
 （1）分配平民词语和卧底词语
 （2）玩家依次发言
-（3）根据发言投票认为谁是卧底
-（4）得到票数最多的玩家出局
-（5）出局玩家刚好是卧底则平民胜利，如果出局玩家是平民则被冤死并继续第2步，当剩下的平民只有1个卧底时胜利。
+（3）投票认为谁是卧底
+（4）得到票数最多的玩家出局，如果最高票数有两个，则进行下一轮。
+（5）出局玩家刚好是卧底则平民胜利，如果出局玩家是平民则被冤死继续下一轮。
+（6）当剩下的玩家只有两个并且有卧底时，卧底胜利。
+
 """
 
 class GameExecute:
@@ -24,9 +28,10 @@ class GameExecute:
     游戏启动引擎
     """
     #生成关键词(面对角色的单例模式）
-    def createKeyWord(self,user_list):
-        self.undercover_word = "狗子"
-        self.civilian_word = "柴狗"
+    def createKeyWord(self,user_list,keyWord_index):
+        key_word = KeyWords()
+        self.civilian_word = key_word.key_word[keyWord_index][0]
+        self.undercover_word = key_word.key_word[keyWord_index][1]
 
         for _user in user_list:
 
@@ -64,17 +69,30 @@ class GameExecute:
         return self.user_list
 
     #模拟玩家发言
-    def userTalk(self,user_list,cur_user_id):
-
+    def userTalk(self,user_list,cur_user_id,keyWord_index):
+        #存放发言的列表（发言要唯一，不重复）
+        content_list = []
+        key_word = KeyWords()
+        contents = key_word.getKeyContent(keyWord_index)  # list
         for user in user_list:
-            if user.id != cur_user_id:
-                content = user.talk()
-                time.sleep(2)
-                print (str(user.id) + ":" + content)
+            #除了当前玩家，其他玩家发言
+            if user.id == cur_user_id:
+                continue
+            else:
 
+                flag = True
+                while flag:
+                    words = contents[user.role_id]  # 元祖
+                    index = random.randint(0, (len(words) - 1))
+                    content = words[index]
 
-
-
-
+                    #如果和已经发言的描述重复，则继续模拟发言
+                    if content in content_list:
+                        continue
+                    else:
+                        content_list.append(content)
+                        time.sleep(1)
+                        print (str(user.id) + ":" + content)
+                        flag = False
 
 
