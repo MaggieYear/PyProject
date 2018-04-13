@@ -42,31 +42,31 @@ class VoteExecute:
             #print self.vote_dict
         return True
 
-    # 模拟其他用户投票
-    def simulateCastVote(self, user_id, user_list):
+    #模拟其他用户投票
+    def simulateCastVote(self,user_id,user_list):
 
-        random_index = random.randint(0, len(user_list)-1)
+        random_index = random.randint(0,len(user_list)-1)
         # 模拟票
         tmp_vote = user_list[random_index].id
         if tmp_vote != user_id:
+            print str(user_id) + "玩家正在投票" + str(tmp_vote)
             self.castVote(user_id, tmp_vote)
-            return str(user_id) + "玩家正在投票" + str(tmp_vote)
 
-    # 分析投票结果
+    #分析投票结果
     def analysisVote(self):
         #对投票结果进行排序,字典转成list
-        vote_list = sorted(self.vote_dict.items(), key=lambda item: item[1])
+        vote_list = sorted(self.vote_dict.items(),key=lambda item:item[1])
 
-        # 取出最后一个元素（票数最多的）
+        #取出最后一个元素（票数最多的）
         max_index = len(vote_list)-1
         max_vote = vote_list[max_index]
 
-        # 取出倒数第二个元素，判断是否平票
+        #取出倒数第二个元素，判断是否平票
         max_index2 = len(vote_list) - 2
         max_vote2 = vote_list[max_index2]
 
-        if max_vote2[1] == max_vote[1]:  # 判断是否平票
+        if max_vote2[1] == max_vote[1]:#判断是否平票
             return None
         else:
             print max_vote
-            return max_vote  #（3,2）user_id为3的用户获得2票
+            return max_vote #（3,2）user_id为3的用户获得2票

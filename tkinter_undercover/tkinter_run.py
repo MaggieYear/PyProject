@@ -16,80 +16,39 @@ class GameRun:
     # 投票和判断输赢模块
     voteExecute = VoteExecute()
 
-    def __int__(self):
-        self.player_count = 0  #玩家数量
-        self.user_list = []
-        self.cur_user = None #当前玩家对象
-        self.cur_id = 0 #当前玩家id
-        self.keyword_index = 0  #当局游戏关键字索引
+    player_count = 0  # 玩家数量
+    user_list = []
+    cur_user = None  # 当前玩家对象
+    cur_id = 0  # 当前玩家id
+    keyword_index = 0  # 当局游戏关键字索引
 
-    def inputGamePlayer(self):
-        # 输入游戏人数
-        user_count = input('请输入游戏人数：')
-        if user_count >= 7:
-            self.player_count = user_count
-            return True
-        else:
-            print '游戏人数不足七位！'
-            return False
+    # def __int__(self):
 
-    #开始游戏
-    def startGame(self):
-        # 询问游戏是否开始
-        is_start = input("现在开始?")
-
-        if cmp(is_start, 'yes') == 0:
-            # 开始游戏
-            print "游戏开始啦！"
-            return True
-        else:
-            return False
-
-    #分配角色和关键字
-    def assignRole(self):
+    # 分配角色和关键字
+    def assign_role(self):
 
         # 关键字模块
-        keyWord = KeyWords()
-        self.keyword_index = keyWord.index
+        key_word = KeyWords()
+        self.keyword_index = key_word.index
 
         # 分配角色（不显示）
-        _user_list = self.gameExecute.createUser(self.player_count)
+        _user_list = self.gameExecute.create_user(self.player_count)
         # 分配关键词
-        user_list = self.gameExecute.createKeyWord(_user_list, keyWord.index)
+        user_list = self.gameExecute.create_keyword(_user_list, key_word.index)
 
         # 当前用户的id
         user_id = random.randint(0, (self.player_count - 1))
 
         user = user_list[user_id]
-        print str(user_id) + '你的关键词：' + str(user.key_word)
 
         self.cur_id = user_id
         self.cur_user = user
         self.user_list = user_list
 
-    #玩家发言
-    def playerDisplay(self):
-        # 发言
-        user_talk = raw_input("请发言：")
+        return user.key_word
 
-        print (str(self.cur_id) + ":" + user_talk)
-
-        # 其他玩家发言
-        self.gameExecute.userTalk(self.user_list , self.cur_id, self.keyword_index)
-
-    #玩家投票
-    def playerVote(self):
-        # 投票
-        cur_vote = input('请投票：')
-
-        result = self.voteExecute.castVote(self.cur_user, cur_vote)
-
-        # 模拟其他玩家投票
-        for other_user in self.user_list:
-            self.voteExecute.simulateCastVote(other_user.id, self.user_list)
-
-    #分析投票结果（输赢判断）
-    def analysisVote(self):
+    # 分析投票结果（输赢判断）
+    def analysis_vote(self):
         # 分析投票结果
 
         vote = self.voteExecute.analysisVote()
@@ -114,7 +73,7 @@ class GameRun:
                 # 判断剩下多少玩家
                 if len(self.user_list) == 2:
                     print "只剩下两个人啦，卧底胜利！"
-                    is_continue = False
+
                     return False
                 else:
                     # 核对user列表，删掉已经删除的。
@@ -124,7 +83,7 @@ class GameRun:
                             self.user_list.remove(user)
                             if len(self.user_list) == 2:
                                 print "只剩下两个人啦，卧底胜利！"
-                                is_continue = False
+
                                 break
                     print "剩下" + str(len(self.user_list)) + "个玩家"
                     # 接着下一轮
@@ -132,38 +91,39 @@ class GameRun:
                     return True
 
     def run(self):
+
         print "---------prepare for game-------------"
 
-        while True:
-            # 输入玩家数量
-            result = self.inputGamePlayer()
-            if result:
-                result = self.startGame()
-                if result:
-                    # 游戏开始
-                    # 分配角色和关键字
-                    self.assignRole()
+        # 绘制窗体和组件
+        game_view = GameView()
+        game_view.draw()
+        # 获得玩家数量
+        player_count = game_view.get_player_count()
 
-                    while True:
-                        # 玩家发言
-                        self.playerDisplay()
-                        #玩家投票
-                        self.playerVote()
-                        #分析投票结果
-                        result = self.analysisVote()
-                        if result is False:
-                            break
-                        else:
-                            continue
-                else:
-                    #游戏不开始，跳出
+        print player_count
+
+        if player_count != 0:
+            self.player_count = player_count
+            # 游戏开始
+            # 分配角色和关键字
+            user_keyword = self.assign_role()
+            # 提示当前玩家关键字
+            game_view.display_message('您获得的关键字是：' + user_keyword )
+
+            while True:
+                # 玩家发言
+                print "请输入描述>>>>>>>"
+                game_view.player_talk()
+                keyword_des = game_view.keyword_des
+
+                # 玩家投票
+                self.player_vote()
+                # 分析投票结果
+                result = self.analysis_vote()
+                if result is False:
                     break
-            else:
-                #玩家数量不足，继续输入
-                continue
-
-
-
+                else:
+                    continue
 if __name__ == '__main__':
     gameRun = GameRun()
     gameRun.run()
