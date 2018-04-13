@@ -38,9 +38,7 @@ class VoteExecute:
                 self.vote_dict[vote_num] = 1
             else:
                 self.vote_dict[vote_num] += 1
-
-            #print self.vote_dict
-        return True
+            return True
 
     # 模拟其他用户投票
     def simulateCastVote(self, user_id, user_list):
@@ -50,7 +48,9 @@ class VoteExecute:
         tmp_vote = user_list[random_index].id
         if tmp_vote != user_id:
             self.castVote(user_id, tmp_vote)
-            return str(user_id) + "玩家正在投票" + str(tmp_vote)
+            return str(user_id) + "号玩家正在投票" + str(tmp_vote)
+        else:
+            return None
 
     # 分析投票结果
     def analysisVote(self):
@@ -60,13 +60,14 @@ class VoteExecute:
         # 取出最后一个元素（票数最多的）
         max_index = len(vote_list)-1
         max_vote = vote_list[max_index]
-
+        print '票数最多'
+        print max_vote
         # 取出倒数第二个元素，判断是否平票
         max_index2 = len(vote_list) - 2
         max_vote2 = vote_list[max_index2]
-
+        print '票数第二多'
+        print max_vote2
         if max_vote2[1] == max_vote[1]:  # 判断是否平票
             return None
         else:
-            print max_vote
             return max_vote  #（3,2）user_id为3的用户获得2票
