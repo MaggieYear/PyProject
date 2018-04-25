@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from user_role import User
-import operator
+__author__ = 'Yekiki'
 import random
 
 """
@@ -18,43 +16,51 @@ class VoteExecute:
     """投票和输赢机制模块"""
 
     def __init__(self):
-        self.user_id = 0
-        self._vote_num = 0
-        self.vote_dict = {}
+        self._vote_dict = {}
 
     @property
-    def vote_num(self):
-        return self._vote_num
+    def vote_dict(self):
+        return self._vote_dict
 
-    #投票
-    def castVote(self,user_id,vote_num):
+    @vote_dict.setter
+    def vote_dict(self, vote_dict):
+        self._vote_dict = vote_dict
 
-        #判断投票是否为当前ID
+    # 投票
+    def cast_vote(self, user_id, vote_num):
+        vote_dict = self.vote_dict
+
+        # 判断投票是否为当前ID
         if user_id == vote_num:
             return False
         else:
-            self._vote_num = vote_num
-            if self.vote_dict.has_key(vote_num) is False:
-                self.vote_dict[vote_num] = 1
+            # self.vote_num = vote_num
+            if vote_dict. has_key(vote_num) is False:
+                vote_dict[vote_num] = 1
             else:
-                self.vote_dict[vote_num] += 1
+                vote_dict[vote_num] += 1
+            self.vote_dict = vote_dict
+            # print '---------------'
+            # print self.vote_dict
             return True
 
     # 模拟其他用户投票
-    def simulateCastVote(self, user_id, user_list):
+    def simulate_cast_vote(self, user_id, user_list):
 
         random_index = random.randint(0, len(user_list)-1)
         # 模拟票
         tmp_vote = user_list[random_index].id
         if tmp_vote != user_id:
-            self.castVote(user_id, tmp_vote)
+            self.cast_vote(user_id, tmp_vote)
             return str(user_id) + "号玩家正在投票" + str(tmp_vote)
         else:
+            # print 'simulate_cast_vote~~~~~~~~~~~~'
             return None
 
+
     # 分析投票结果
-    def analysisVote(self):
-        #对投票结果进行排序,字典转成list
+    def analysis_vote(self):
+        # 对投票结果进行排序,字典转成list
         vote_list = sorted(self.vote_dict.items(), key=lambda item: item[1])
 
         # 取出最后一个元素（票数最多的）
@@ -70,4 +76,8 @@ class VoteExecute:
         if max_vote2[1] == max_vote[1]:  # 判断是否平票
             return None
         else:
-            return max_vote  #（3,2）user_id为3的用户获得2票
+            return max_vote
+
+    # 对票数进行清零
+    def clear_vote(self):
+        self.vote_dict = {}

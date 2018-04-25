@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+__author__ = 'Yekiki'
 from user_role import User
-from user_role import Role
 from key_word import KeyWords
-import time
 import random
 
 """
@@ -63,13 +62,14 @@ class GameExecute:
             self.user_list.append(user)
             cur_id += 1
             civilian_count -= 1
-        print str(cur_id) + '总用户数' + str(len(self.user_list))
+        # print str(cur_id) + '总用户数' + str(len(self.user_list))
 
         return self.user_list
 
     # 模拟玩家发言
     def user_talk(self, user_list, cur_user_id, keyword_index):
         # 存放发言的列表（发言要唯一，不重复）
+
         content_tuple = ()
         temp_list = []
         content_list = []
@@ -86,9 +86,7 @@ class GameExecute:
                     index = random.randint(0, (len(words) - 1))
                     content = words[index]
                     # 如果和已经发言的描述重复，则继续模拟发言
-                    if content in temp_list:
-                        continue
-                    else:
+                    if content not in temp_list:
                         content_tuple = (user.id, content)
                         temp_list.append(content)
                         content_list.append(content_tuple)

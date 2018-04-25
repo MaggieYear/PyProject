@@ -21,7 +21,7 @@ def login_request():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36'}
 
-    values = {'account_l':'18682268349','password_l':'eqqweqw'}
+    values = {'account_l':'xxxxxx','password_l':'eqqweqw'}
     data = urllib.urlencode(values)
     request = urllib2.Request(url=url,data=data, headers=headers)
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+__author__ = 'Yekiki'
 from game_execute import GameExecute
 from vote_execute import VoteExecute
 import random
@@ -8,20 +9,17 @@ from key_word import KeyWords
 class GameRun:
     """游戏控制器"""
 
-    # 单例模式
-    # 游戏核心模块
-    gameExecute = GameExecute()
-
-    # 投票和判断输赢模块
-    voteExecute = VoteExecute()
-
-    player_count = 0  # 玩家数量
-    user_list = []
-    cur_user = None  # 当前玩家对象
-    cur_id = 0  # 当前玩家id
-    keyword_index = 0  # 当局游戏关键字索引
-
-    # def __int__(self):
+    def __init__(self):
+        self.player_count = 0  # 玩家数量
+        self.user_list = []
+        self.cur_user = None  # 当前玩家对象
+        self.cur_id = 0  # 当前玩家id
+        self.keyword_index = 0  # 当局游戏关键字索引
+        # 单例模式
+        # 游戏核心模块
+        self.gameExecute = GameExecute()
+        # 投票和判断输赢模块
+        self.voteExecute = VoteExecute()
 
     # 分配角色和关键字
     def assign_role(self):
@@ -52,17 +50,21 @@ class GameRun:
         return content_list
 
     # 玩家投票
-    def player_vote(self,vote_num):
-        result = self.voteExecute.castVote(self.cur_id, vote_num)
+    def player_vote(self, vote_num):
+        result = self.voteExecute.cast_vote(self.cur_id, vote_num)
         return result
 
-    def simulateCastVote(self, user_id):
-        contennt = self.voteExecute.simulateCastVote(user_id, self.user_list)
-        return contennt
-
+    # 模拟其他玩家投票
+    def simulate_cast_vote(self, user_id):
+        vote_content = self.voteExecute.simulate_cast_vote(user_id, self.user_list)
+        return vote_content
 
     # 分析投票结果（输赢判断）
     def analysis_vote(self):
         # 分析投票结果
-        vote = self.voteExecute.analysisVote()
+        vote = self.voteExecute.analysis_vote()
         return vote
+
+    # 对票数进行清零
+    def clear(self):
+        self.voteExecute.clear_vote()

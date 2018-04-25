@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+__author__ = 'Yekiki'
 import re
 class StrUtils:
     """汉字处理的工具:
