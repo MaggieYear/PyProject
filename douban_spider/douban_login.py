@@ -13,11 +13,9 @@ class DoubanClient(object):
         self.session = requests.Session()
         self.session.headers.update(headers)
 
-    def login(self,url, username, password, source='index_nav',
+    def login(self, url, username, password, source='index_nav',
               redir='http://www.douban.com/',
               login='登录'):
-
-        # r = requests.get(url)
         r = self.session.get(url)
 
         # 如果有验证码的话，获取验证码
@@ -27,12 +25,11 @@ class DoubanClient(object):
             captcha_solution = raw_input('enter solution for [%s]:' % captcha_url )
         """
 
-        data = { 'source': source,
+        data = {'source': source,
                  'redir': redir,
                  'form_email': username,
                  'form_password': password,
-                 'login': login
-                 }
+                 'login': login}
 
         # if captcha_id:
         #     data['captcha-id'] = captcha_id
@@ -41,8 +38,6 @@ class DoubanClient(object):
         headers = {'Referer': 'https://accounts.douban.com/login',
                    'Host': 'accounts.douban.com'}
 
-       # r = requests.post(url, data=data, headers=headers)
-
         self.session.post(url, data=data, headers=headers)
         # 登录成功后返回的cookies
         print(self.session.cookies.items())
@@ -50,20 +45,17 @@ class DoubanClient(object):
 
     # 修改个人签名
     def edit_signature(self, username, signature, ck='PvCf'):
-        url  = 'https://www.douban.com/j/people/%s/edit_signature' % username
+        url = 'https://www.douban.com/people/%s/' % username
         r = self.session.get(url)
         ck = _get_ck(r.content)
 
-        url = ''
-        headers = {
-
-        }
-        data = {
-
-        }
-        r = self.session.post(url, data=data ,headers=headers)
-        pass
-
+        url = 'https://www.douban.com/j/people/%s/edit_signature' % username
+        headers = {'Referer': url,
+                'Host': 'www.douban.com',
+                'X - Requested - With': 'XMLHttpRequest'}
+        data = {'ck': ck, 'signature': signature}
+        r = self.session.post(url, data=data, headers=headers)
+        print(r.content)
 
 def _attr(attrs, attrname):
     for attr in attrs:
@@ -94,14 +86,16 @@ def _get_captcha(content):
 
 # 获得个人签名的表单，修改个人签名
 def _get_ck(content):
+
     class CKParser(HTMLParser):
-        def __int__(self):
+        def __init__(self):
             HTMLParser.__init__(self)
             self.ck = None
 
         def handle_starttag(self, tag, attrs):
             if tag == 'input' and _attr(attrs, 'type') == 'hidden' and _attr(attrs, 'name') == 'ck':
                 self.ck = _attr(attrs, 'value')
+
     p = CKParser()
     p.feed(content)
     return p.ck
@@ -112,4 +106,5 @@ if __name__ == '__main__':
     c.login(url, '18682268349', 'Geren123+-')
 
     user_id = '168341339'
-    edit_signature(user_id, )
+    signature = '现实不似我所见'
+    #c.edit_signature(user_id, signature)
