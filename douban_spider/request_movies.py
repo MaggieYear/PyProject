@@ -4,6 +4,7 @@ __author__ = 'mocha_kiki'
 import urllib2
 import requests
 from HTMLParser import HTMLParser
+import os
 
 class MovieParser(HTMLParser):
     def __init__(self):
@@ -44,12 +45,20 @@ class MovieParser(HTMLParser):
 # 从url下载图片
 def _download_poster_image(movie):
     src = movie['poster-url']
-    r = requests.get(src)
+    # 忽略证书下载图片
+    r = requests.get(src, verify=False)
+    # 下载到img文件夹下
+    path = 'img'
+    if not os.path.exists(path):
+        os.makedirs(path)
+
     fname = src.split("/")[-1]
+    file_path = path + '/' + fname
+    print(file_path)
     # 二进制写出到文件
-    with open(fname, 'wb') as f:
-        f.write(r.content)
-        movie['poster-path'] = fname
+    with open(file_path, 'wb') as f:
+       f.write(r.content)
+       movie['poster-path'] = file_path
 
 def nowplaying_movies(url):
     headers = {
