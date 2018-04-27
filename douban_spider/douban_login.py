@@ -20,33 +20,35 @@ class DoubanClient(object):
         r = self.session.get(url)
 
         # 如果有验证码的话，获取验证码
-        (captcha_id, captcha_url) = _get_captcha(r.content)
-        if captcha_id:
-            captcha_solution = raw_input('enter solution for [%s]:' % captcha_url )
+        # (captcha_id, captcha_url) = _get_captcha(r.content)
+        # if captcha_id:
+        #     captcha_solution = raw_input('enter solution for [%s]:' % captcha_url )
 
         data = {'source': source,
                  'redir': redir,
                  'form_email': username,
                  'form_password': password,
                  'remember': remember}
-
-        if captcha_id:
-            data['captcha-id'] = captcha_id
-            data['captcha-solution'] = captcha_solution
+        # if captcha_id:
+        #     data['captcha-id'] = captcha_id
+        #     data['captcha-solution'] = captcha_solution
 
         headers = {'Referer': 'https://www.douban.com/accounts/login?source=book',
                    'Host': 'accounts.douban.com'}
 
-        r = self.session.post(url, data=data, headers=headers, verify=False)
+        req = self.session.post(url, data=data, headers=headers, verify=False)
         # 登录成功后返回的cookies
         print(self.session.cookies.items())
-        print(r.content)
+        # print(req.content)
 
     # 修改个人签名
     def edit_signature(self, username, signature, ck='PvCf'):
         url = 'https://www.douban.com/people/%s/' % username
         r = self.session.get(url)
+        print(r.content)
         ck = _get_ck(r.content)
+        print("ck...")
+        print(ck)
 
         url = 'https://www.douban.com/j/people/%s/edit_signature' % username
         headers = {'Referer': url,
@@ -118,7 +120,7 @@ def _get_ck(content):
     return p.ck
 
 if __name__ == '__main__':
-    url = 'https://accounts.douban.com/login'
+    url = 'https://www.douban.com/accounts/login'
     c = DoubanClient()
     c.login(url, '18682268349', 'Geren123+-')
 
