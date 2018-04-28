@@ -11,29 +11,29 @@ class DoubanClient(object):
     def __init__(self):
         object.__init__(self)
         headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36',
-                   'Origin': 'https://www.douban.com'}
+                   'Origin': 'https://accounts.douban.com'}
         self.session = requests.Session()
         self.session.headers.update(headers)
 
-    def login(self, url, username, password, source='book',
-              redir='https://book.douban.com/', remember='on'):
+    def login(self, url, username, password, source='None',
+              redir='https://www.douban.com/'):
         r = self.session.get(url)
 
         # 如果有验证码的话，获取验证码
-        # (captcha_id, captcha_url) = _get_captcha(r.content)
-        # if captcha_id:
-        #     captcha_solution = raw_input('enter solution for [%s]:' % captcha_url )
+        (captcha_id, captcha_url) = _get_captcha(r.content)
+        if captcha_id:
+            captcha_solution = raw_input('enter solution for [%s]:' % captcha_url)
 
         data = {'source': source,
-                 'redir': redir,
-                 'form_email': username,
-                 'form_password': password,
-                 'remember': remember}
-        # if captcha_id:
-        #     data['captcha-id'] = captcha_id
-        #     data['captcha-solution'] = captcha_solution
+                'redir': redir,
+                'form_email': username,
+                'form_password': password,
+                'login': '登录'}
+        if captcha_id:
+            data['captcha-id'] = captcha_id
+            data['captcha-solution'] = captcha_solution
 
-        headers = {'Referer': 'https://www.douban.com/accounts/login?source=book',
+        headers = {'Referer': 'https://accounts.douban.com/login',
                    'Host': 'accounts.douban.com'}
 
         req = self.session.post(url, data=data, headers=headers, verify=False)
@@ -43,27 +43,23 @@ class DoubanClient(object):
 
     # 修改个人签名
     def edit_signature(self, username, signature, ck='PvCf'):
-        url = 'https://www.douban.com/people/%s/' % username
-        r = self.session.get(url)
-        print(r.content)
-        ck = _get_ck(r.content)
-        print("ck...")
-        print(ck)
+        pre_url = 'https://www.douban.com/people/%s' % username
+        r = self.session.get(pre_url)
+        # ck = _get_ck(r.content)
+        ck = _attr(self.session.cookies.items(), 'ck')
 
         url = 'https://www.douban.com/j/people/%s/edit_signature' % username
-        headers = {'Referer': url,
+        headers = {'Referer': pre_url,
                 'Host': 'www.douban.com',
                 'X - Requested - With': 'XMLHttpRequest'}
         data = {'ck': ck, 'signature': signature}
         r = self.session.post(url, data=data, headers=headers, verify=False)
-        # print(r.content)
 
 def _attr(attrs, attrname):
     for attr in attrs:
         if attr[0] == attrname:
             return attr[1]
     return None
-
 
 # 获取验证码
 def _get_captcha(content):
@@ -79,13 +75,12 @@ def _get_captcha(content):
                 self.captcha_id = _attr(attrs, 'value')
 
             if tag == 'img' and _attr(attrs, 'id') == 'captcha_image' and _attr(attrs, 'class') == 'captcha_image':
-                self.captcha_url = _attr(attrs,'src')
-                _download_image(self.captcha_url)
+                self.captcha_url = _attr(attrs, 'src')
+                # _download_image(self.captcha_url)
 
     p = CaptchaParser()
     p.feed(content)
     return p.captcha_id, p.captcha_url
-
 
 # 从url下载图片
 def _download_image(url):
@@ -120,11 +115,11 @@ def _get_ck(content):
     return p.ck
 
 if __name__ == '__main__':
-    url = 'https://www.douban.com/accounts/login'
+    # url = 'https://www.douban.com/accounts/login'
+    url = 'https://accounts.douban.com/login'
     c = DoubanClient()
     c.login(url, '18682268349', 'Geren123+-')
 
     user_id = '168341339'
-    signature = '现实不似我所见'
+    signature = '听风不是雨'
     c.edit_signature(user_id, signature)
-    print(c.session.cookies.items())
