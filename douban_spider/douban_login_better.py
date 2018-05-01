@@ -9,8 +9,8 @@ def get_captcha(url, headers):
     data = {    # 传输数据
         'source': None,
         'redir': 'https://www.douban.com/people/168341339/',
-        'form_email': '380075669@qq.com',
-        'form_password': 'Geren123+-',
+        'form_email': 'xxxxx',
+        'form_password': 'xxxx',
         'login': '登录'
         #'captcha-solution': '',
         #'captcha-id': ''
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     get_myindex(my_url, session)
 
     # 修改个人签名
-    username = '168341339'
+    username = 'xxxxx'
     signature = '现实不似我所见'
     edit_sign_url = 'https://www.douban.com/j/people/' + username + '/edit_signature'
     edit_signature(edit_sign_url, signature. session)
