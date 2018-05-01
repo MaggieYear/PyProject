@@ -118,8 +118,8 @@ if __name__ == '__main__':
     # url = 'https://www.douban.com/accounts/login'
     url = 'https://accounts.douban.com/login'
     c = DoubanClient()
-    c.login(url, '18682268349', 'Geren123+-')
+    c.login(url, 'xxxxx', 'xxxxx')
 
-    user_id = '168341339'
+    user_id = 'xxxxxx'
     signature = '听风不是雨'
     c.edit_signature(user_id, signature)
